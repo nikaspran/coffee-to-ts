@@ -3,6 +3,7 @@
   "name": "coffee-to-ts",
   "description": "",
   "author": " <>",
+  "bin": "lib/index.js",
   "main": "lib/index.js",
   "devDependencies": {
     "babel-cli": "^6.4.5",
