@@ -1,4 +1,3 @@
-import Parser from "babylon/lib/parser";
 import {types} from 'babylon/lib/tokenizer/types';
 import Printer from 'babel-generator/lib/printer';
 import * as babelTypes from 'babel-types';
