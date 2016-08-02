@@ -1,6 +1,6 @@
 {
   "version": "0.0.0",
-  "name": "js-to-ts",
+  "name": "coffee-to-ts",
   "description": "",
   "author": " <>",
   "main": "lib/index.js",
