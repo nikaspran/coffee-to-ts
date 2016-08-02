@@ -16,7 +16,7 @@
     "build": "babel src -d lib",
     "test": "mocha --compilers js:babel-register",
     "test:watch": "npm run test -- --watch",
-    "postinstall": "npm run clean && npm run build"
+    "prepublish": "npm run clean && npm run build"
   },
   "dependencies": {
     "babel-template": "^6.9.0",
