@@ -27,5 +27,6 @@
     "decaffeinate": "^2.19.5",
     "glob": "^7.0.5",
     "lodash": "^4.14.1"
-  }
+  },
+  "preferGlobal": true
 }
