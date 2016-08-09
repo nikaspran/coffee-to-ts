@@ -1,7 +1,7 @@
 class SomeController {
 	constructor() {}
 
-	private somePrivateMethod() {}
+	private _somePrivateMethod() {}
 
 	somePublicMethod() {}
 }

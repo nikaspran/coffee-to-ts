@@ -5,9 +5,18 @@ const templateUrl = <string> require('./templateSubcategoryTemplate.html');
 let TEMPLATES_PER_PAGE = 10;
 
 class TemplateSubcategoryController {
+	category;
+	initialTemplateCount;
+	templateLimit;
+	onCreateWrap;
+	isCreatingFromTemplate;
+	location;
+	searchQuery;
+	pager;
+
 	/* @ngInject */
-	constructor($scope, private $state, private $window, private WrapResource, private permissionsService, private eventBus, private templateCategories, Pager, private confirmationService, private fullScreenLoading, private loadingMessages, private notificationUtils) {
-		let TEAM_ID = this.permissionsService.getCurrentTeamId();
+	constructor($scope, private _$state, private _$window, private _WrapResource, private _permissionsService, private _eventBus, private _templateCategories, Pager, private _confirmationService, private _fullScreenLoading, private _loadingMessages, private _notificationUtils) {
+		let TEAM_ID = this._permissionsService.getCurrentTeamId();
 
 		$scope.$watchGroup(['$ctrl.category', '$ctrl.searchQuery'], () => {
 			if (!this.category) {
@@ -17,13 +26,13 @@ class TemplateSubcategoryController {
 			this.onlyShowInitialTemplates();
 
 			if (this.category.myTemplates) {
-				var queryFn = this.WrapResource.getTeamTemplates;
+				var queryFn = this._WrapResource.getTeamTemplates;
 				var params = {
 					teamId: TEAM_ID
 				};
 			} else {
-				var queryFn = this.WrapResource.getTemplates;
-				var params = this.paramsFor(this.category);
+				var queryFn = this._WrapResource.getTemplates;
+				var params = this._paramsFor(this.category);
 			}
 
 			this.pager = new Pager(queryFn, params, TEMPLATES_PER_PAGE);
@@ -31,14 +40,14 @@ class TemplateSubcategoryController {
 		});
 	}
 
-	private paramsFor(category) {
+	private _paramsFor(category) {
 		let params = {
-			teamId: this.permissionsService.getCurrentTeamId(),
+			teamId: this._permissionsService.getCurrentTeamId(),
 			templateLocation: this.location,
 			deviceType: 'desktop'
 		};
 
-		if (!this.templateCategories.isAllTemplates(category)) {
+		if (!this._templateCategories.isAllTemplates(category)) {
 			params.categoryId = category.id;
 		}
 
@@ -46,37 +55,37 @@ class TemplateSubcategoryController {
 	}
 
 	previewTemplate(template) {
-		return this.WrapResource.getWrap({ id: template.id }).$promise.then(wrap => PreviewUnpublishedWrapMediaEmbed.show(wrap));
+		return this._WrapResource.getWrap({ id: template.id }).$promise.then(wrap => PreviewUnpublishedWrapMediaEmbed.show(wrap));
 	}
 
 	editTemplate(template) {
-		this.eventBus.editWrapFromWrapListStart();
-		return this.$state.go('wraps.show.cards.show', {
+		this._eventBus.editWrapFromWrapListStart();
+		return this._$state.go('wraps.show.cards.show', {
 			wrap_id: template.id,
 			card_id: template.cards[0].id,
-			teamId: this.$state.params.teamId
+			teamId: this._$state.params.teamId
 		});
 	}
 
 	copyTemplate(template) {
-		this.eventBus.copyTemplateFromTemplatesListStart();
-		this.fullScreenLoading.show(this.loadingMessages.WRAP_CREATING_MESSAGE);
-		return template.clone(null, this.$state.params.teamId, true).then(response => {
+		this._eventBus.copyTemplateFromTemplatesListStart();
+		this._fullScreenLoading.show(this._loadingMessages.WRAP_CREATING_MESSAGE);
+		return template.clone(null, this._$state.params.teamId, true).then(response => {
 			this.pager.items.unshift(response);
-			return this.$window.scrollTo(0, 0);
+			return this._$window.scrollTo(0, 0);
 		}).catch(response => {
 			let hasReachedWrapsLimit = __guard__(__guard__(response.data.errors, x1 => x1.base), x => x[0]) === 'wrap quota exceeded';
 			if (hasReachedWrapsLimit) {
-				return this.notificationUtils.wrapCountExceededNotification();
+				return this._notificationUtils.wrapCountExceededNotification();
 			}
 		}).finally(() => {
-			this.fullScreenLoading.hide();
-			return this.eventBus.copyTemplateFromTemplatesListFinish();
+			this._fullScreenLoading.hide();
+			return this._eventBus.copyTemplateFromTemplatesListFinish();
 		});
 	}
 
 	removeTemplate(template) {
-		return this.confirmationService.show({
+		return this._confirmationService.show({
 			title: `Delete \"${ template.name }\"`,
 			buttons: {
 				cancel: 'Go back',
@@ -85,25 +94,25 @@ class TemplateSubcategoryController {
 			isDestructive: true,
 			content: '<p class="primary-text">Are you sure you want to delete this Template?</p><p class="secondary-text"><b>CAUTION:</b> This cannot be undone.</p>'
 		}).then(() => {
-			this.eventBus.deleteTemplateFromTemplateListStart();
-			return this.WrapResource.delete({ id: template.id }).$promise.then(() => {
-				this.eventBus.deleteTemplateFromTemplateListFinish({ templateId: template.id });
+			this._eventBus.deleteTemplateFromTemplateListStart();
+			return this._WrapResource.delete({ id: template.id }).$promise.then(() => {
+				this._eventBus.deleteTemplateFromTemplateListFinish({ templateId: template.id });
 				return _.remove(this.pager.items, template);
 			});
 		});
 	}
 
 	createFromTemplate(template) {
-		this.eventBus.createWrapFromTemplateStart();
+		this._eventBus.createWrapFromTemplateStart();
 		template.isCreating = true;
 		this.isCreatingFromTemplate = true;
 
-		return this.WrapResource.createFromTemplate({
+		return this._WrapResource.createFromTemplate({
 			templateId: template.id,
-			teamId: this.permissionsService.getCurrentTeamId()
+			teamId: this._permissionsService.getCurrentTeamId()
 		}).then(wrap => {
 			__guardFunc__(this.onCreateWrap, f => f({ wrap }));
-			return this.eventBus.createWrapFromTemplateFinish({ wrapId: wrap.id, templateId: template.id });
+			return this._eventBus.createWrapFromTemplateFinish({ wrapId: wrap.id, templateId: template.id });
 		}).finally(() => {
 			template.isCreating = false;
 			return this.isCreatingFromTemplate = false;
@@ -111,17 +120,17 @@ class TemplateSubcategoryController {
 	}
 
 	loadMore() {
-		if (!this.hasMoreCachedTemplates()) {
+		if (!this._hasMoreCachedTemplates()) {
 			this.pager.query();
 		}
-		return this.showAllLoadedTemplates();
+		return this._showAllLoadedTemplates();
 	}
 
 	hasMore() {
-		return __guard__(this.pager, x => x.hasMore()) || this.hasMoreCachedTemplates();
+		return __guard__(this.pager, x => x.hasMore()) || this._hasMoreCachedTemplates();
 	}
 
-	private hasMoreCachedTemplates() {
+	private _hasMoreCachedTemplates() {
 		return this.templateLimit < __guard__(this.pager, x => x.items.length);
 	}
 
@@ -129,7 +138,7 @@ class TemplateSubcategoryController {
 		return this.templateLimit = this.initialTemplateCount || 1;
 	}
 
-	private showAllLoadedTemplates() {
+	private _showAllLoadedTemplates() {
 		return this.templateLimit = undefined;
 	}
 }

@@ -1,42 +1,5 @@
-import {types} from 'babylon/lib/tokenizer/types';
-import Printer from 'babel-generator/lib/printer';
-import * as babelTypes from 'babel-types';
-import _ from 'lodash';
-
-stubClassMethodValidatorToAllowForScopeModifiedIdentifiers();
-function stubClassMethodValidatorToAllowForScopeModifiedIdentifiers() {
-	const originalValidator = babelTypes.NODE_FIELDS.ClassMethod.key.validate;
-
-	babelTypes.NODE_FIELDS.ClassMethod.key.validate = function (node, key, val) {
-		if (val.type === 'ScopeModifiedIdentifier') {
-			return true;
-		} else {
-			return originalValidator(node, key, val);
-		}
-	}
-}
-
-Printer.prototype.ScopeModifiedIdentifier = function (node) {
-	this.word(node.modifier);
-	this.space();
-	this.print(node.identifier, node);
-};
-
-function modifyWithScope(modifier, identifier) {
-	return {
-		type: 'ScopeModifiedIdentifier',
-		modifier,
-		identifier
-	}
-}
-
-function isPrivate(node) {
-	return node.name.startsWith('_');
-}
-
-function deprivatifiedName(node) {
-	return node.name.replace('_', '');
-}
+import './common/scopedIdentifiers';
+import {isPrivate, paramsByName, modifyWithScope, isConstructor, deprivatifiedName} from '../utils';
 
 export default function ({types: t}) {
 	const propertyAssignments = {
@@ -57,51 +20,27 @@ export default function ({types: t}) {
 				return;
 			}
 
-			this.exposedAs(isPrivate(node.right) ? 'private' : 'public', constructorArgument);
+			this.exposeAs(isPrivate(node.right) ? 'private' : 'public', constructorArgument);
 			path.remove();
 		}
 	};
 
-	function visitConstructor(path) {
-		const {node} = path;
-
-		path.traverse(propertyAssignments, {
-			paramsByName: _.keyBy(path.get('params'), 'node.name'),
-			exposedAs: (scope, paramPath) => {
-				if (isPrivate(paramPath.node)) {
-					path.scope.rename(paramPath.node.name, deprivatifiedName(paramPath.node));
-				}
-				paramPath.replaceWith(modifyWithScope(scope, paramPath.node))
-			}
-		});
-	}
-
-	function visitMethod(path) {
-		const keyPath = path.get('key');
-		if (isPrivate(keyPath.node)) {
-			keyPath.node.name = deprivatifiedName(keyPath.node);
-			keyPath.replaceWith(modifyWithScope('private', keyPath.node));
-		}
-	}
-
 	return {
 		visitor: {
 			ClassMethod(path) {
-				const visitors = {
-					constructor: visitConstructor,
-					method: visitMethod
-				};
+				if (!isConstructor(path)) {
+					return;
+				}
 
-				const visitor = visitors[path.node.kind];
-				if (visitor) {
-					visitor(path);
-				}
-			},
-			MemberExpression(path) {
-				const {node} = path;
-				if (t.isThisExpression(node.object) && isPrivate(node.property)) {
-					node.property.name = deprivatifiedName(node.property);
-				}
+				path.traverse(propertyAssignments, {
+					paramsByName: paramsByName(path),
+					exposeAs: (scope, paramPath) => {
+						// if (isPrivate(paramPath.node)) {
+						// 	path.scope.rename(paramPath.node.name, deprivatifiedName(paramPath.node));
+						// }
+						paramPath.replaceWith(modifyWithScope(scope, paramPath.node))
+					}
+				});
 			}
 		}
 	}

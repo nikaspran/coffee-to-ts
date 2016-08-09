@@ -3,14 +3,14 @@ import fs from 'fs';
 import _ from 'lodash';
 
 const pluginsToLoad = _(fs.readdirSync(__dirname))
-	.filter((plugin) => !plugin.startsWith('loadPlugins'))
+	.reject((plugin) => plugin.startsWith('loadPlugins') || plugin.startsWith('common'))
 	.map((plugin) => plugin.split('.').shift())
 	.map((pluginName) => {
 		return {
 			[pluginName]: require(`./${pluginName}`).parser
 		}
 	})
-	.reduce(_.merge);
+	.reduce(_.assign);
 
 Object.assign(plugins, pluginsToLoad);
 

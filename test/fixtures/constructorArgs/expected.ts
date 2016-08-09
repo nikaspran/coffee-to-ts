@@ -1,11 +1,13 @@
 class SomeController {
-	constructor(someLocal, public somePublic, private somePrivate) {
-		this.somethingElse = somePrivate;
+	somethingElse;
+
+	constructor(someLocal, public somePublic, private _somePrivate) {
+		this.somethingElse = _somePrivate;
 		const x = someLocal;
 		console.log(x);
 	}
 
 	someMethod() {
-		console.log(this.somePrivate);
+		console.log(this._somePrivate);
 	}
 }
