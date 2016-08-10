@@ -1,7 +1,6 @@
 import module = require('refactor/module');
 const templateUrl = <string> require('./templateSubcategoryTemplate.html');
 
-
 let TEMPLATES_PER_PAGE = 10;
 
 class TemplateSubcategoryController {

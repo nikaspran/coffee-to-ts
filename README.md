@@ -16,14 +16,14 @@
 1. Convert all CoffeeScript files in the current directory
 
   ```bash
-  > coffee-to-ts *.coffee
+  > coffee-to-ts "*.coffee"
   Converted productPreviewDirective.coffee => productPreviewDirective.ts
   ```
   
 2. Use a different version of Node via `nvm` and convert all subdirectories of the current directory
 
   ```bash
-  > nvm exec stable coffee-to-ts **/*.coffee
+  > nvm exec stable coffee-to-ts "**/*.coffee"
   Converted productPreviewDirective.coffee => productPreviewDirective.ts
   Converted productDirective.coffee => productDirective.ts
   ```
