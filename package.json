@@ -13,13 +13,12 @@
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "babel src -d lib",
-    "test": "mocha --compilers js:babel-register",
+    "build": "./node_modules/.bin/babel src -d lib",
+    "test": "./node_modules/.bin/mocha --compilers js:babel-register",
     "test:watch": "npm run test -- --watch",
     "prepublish": "npm run clean && npm run build"
   },
   "dependencies": {
-    "babel": "^6.5.2",
     "babel-core": "^6.11.4",
     "babel-generator": "^6.11.4",
     "babel-template": "^6.9.0",

@@ -43,7 +43,8 @@ glob(filePattern, {
 					});
 				});
 			} catch (err) {
-				console.log(`Could not convert ${fileName}: ${err}`);
+				console.log(`Could not convert ${fileName}:`);
+				console.error(err.stack);
 			}
 		})
 	});
