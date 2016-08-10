@@ -35,12 +35,11 @@ Parser.prototype.tsParseImportRequire = function (node) {
 	this.next();
 	node.local = this.parseIdentifier();
 
-	if (!this.eat(types.eq) || !this.eatContextual('require') || !this.eat(types.parenL)) {
-		return false;
-	}
+	this.eat(types.eq);
+	this.eatContextual('require');
+	this.eat(types.parenL);
 
 	node.source = this.match(types.string) ? this.parseExprAtom() : this.unexpected();
-
 	this.eat(types.parenR);
 	this.semicolon();
 	return this.finishNode(node, 'ImportRequire');
@@ -51,14 +50,12 @@ export function parser(instance) {
 		return function (node) {
 			const oldState = this.state.clone(true);
 
-			const parsedImportRequire = this.tsParseImportRequire(node);
-
-			if (parsedImportRequire) {
-				return parsedImportRequire;
+			try {
+				return this.tsParseImportRequire(node);
+			} catch (e) {
+				this.state = oldState;
+				return inner.call(this, node);
 			}
-
-			this.state = oldState;
-			return inner.call(this, node);
 		};
 	});
 }
@@ -75,8 +72,12 @@ export default function ({types: t}) {
 	return {
 		visitor: {
 			ImportDeclaration(path){
-				const source = path.node.source.value;
+				if (!path.node.local) {
+					return;
+				}
+
 				const local = path.node.local.name;
+				const source = path.node.source.value;
 
 				if (local === 'templateUrl') {
 					const requireSource = t.callExpression(t.identifier('require'), [t.stringLiteral(source)]);
