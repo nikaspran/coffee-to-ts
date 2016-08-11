@@ -1,5 +1,5 @@
 class SomeController {
-	constructor(someLocal, somePublic, _somePrivate) {
+	constructor(someLocal, somePublic, _somePrivate, someLocalDefault = {}) {
 		this.somePublic = somePublic;
 		this._somePrivate = _somePrivate;
 		this.somethingElse = _somePrivate;

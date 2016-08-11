@@ -18,6 +18,10 @@ export function modifyWithScope(modifier, identifier) {
 }
 
 export function nameOf(maybeScopedIdentifier) {
+	if (t.isAssignmentPattern(maybeScopedIdentifier)) {
+		return nameOf(maybeScopedIdentifier.left);
+	}
+
 	return maybeScopedIdentifier.name || maybeScopedIdentifier.identifier.name
 }
 
