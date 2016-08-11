@@ -16,6 +16,7 @@ Object.assign(plugins, pluginsToLoad);
 
 export function generatePlugins() {
 	return [
+		'syntax-class-properties',
 		require.resolve('./loadPlugins'),
 		..._.keys(pluginsToLoad).map((plugin) => require.resolve(`./${plugin}`))
 	];

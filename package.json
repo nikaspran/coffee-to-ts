@@ -16,18 +16,21 @@
     "build": "./node_modules/.bin/babel src -d lib",
     "test": "./node_modules/.bin/mocha --compilers js:babel-register",
     "test:watch": "npm run test -- --watch",
-    "prepublish": "npm run clean && npm run build"
+    "prepublish": "npm run test && npm run clean && npm run build"
   },
   "dependencies": {
     "babel-core": "^6.11.4",
     "babel-generator": "^6.11.4",
+    "babel-plugin-syntax-class-properties": "^6.13.0",
     "babel-template": "^6.9.0",
     "babel-types": "^6.11.1",
     "babylon": "^6.8.4",
     "commander": "^2.9.0",
     "decaffeinate": "^2.19.5",
     "glob": "^7.0.5",
-    "lodash": "^4.14.1"
+    "install": "^0.8.1",
+    "lodash": "^4.14.1",
+    "npm": "^3.10.5"
   },
   "preferGlobal": true
 }
