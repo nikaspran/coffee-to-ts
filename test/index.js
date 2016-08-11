@@ -10,6 +10,9 @@ function trim(str) {
 const DO_NOT_RUN = [
 	// 'component1'
 ];
+const ONLY_RUN = [
+	// 'jasmineTests'
+];
 
 describe('', () => {
 	const fixturesDir = path.join(__dirname, 'fixtures');
@@ -21,7 +24,9 @@ describe('', () => {
 			return;
 		}
 
-		it(testName, () => {
+		const testCaseType = ONLY_RUN.some((prefix) => caseName.startsWith(prefix)) ? it.only.bind(it) : it;
+
+		testCaseType(testName, () => {
 			const fixtureDir = path.join(fixturesDir, caseName);
 			const actualPath = path.join(fixtureDir, 'actual.js');
 			const actual = jsToTs(fs.readFileSync(actualPath).toString());

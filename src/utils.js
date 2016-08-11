@@ -9,6 +9,10 @@ export function paramsByName(methodPath) {
 	return _.keyBy(methodPath.get('params'), ({node}) => nameOf(node));
 }
 
+export function isRawFunctionCall(node, fnName) {
+	return t.isIdentifier(node.callee) && nameOf(node.callee) === fnName;
+}
+
 export function modifyWithScope(modifier, identifier) {
 	return {
 		type: 'ScopeModifiedIdentifier',
