@@ -16,7 +16,6 @@ Object.assign(plugins, pluginsToLoad);
 
 export function generatePlugins() {
 	return [
-		'syntax-class-properties',
 		require.resolve('./loadPlugins'),
 		..._.keys(pluginsToLoad).map((plugin) => require.resolve(`./${plugin}`))
 	];
@@ -25,6 +24,7 @@ export function generatePlugins() {
 export default function addParserPlugins() {
 	return {
 		manipulateOptions(opts, parserOpts) {
+			parserOpts.plugins.push('classProperties');
 			parserOpts.plugins.push(..._.keys(pluginsToLoad));
 		}
 	};

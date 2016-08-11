@@ -5,7 +5,7 @@ export default function ({types: t}) {
 		visitor: {
 			MemberExpression(path) {
 				const {node} = path;
-				if (!t.isThisExpression(node.object) || isPrivate(node.property)) {
+				if (!t.isThisExpression(node.object) || !t.isIdentifier(node.property) || isPrivate(node.property)) {
 					return;
 				}
 
