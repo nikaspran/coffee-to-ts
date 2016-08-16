@@ -6,10 +6,14 @@ function compactMultipleNewlines(str) {
 	return str.replace(/\n\s*\n\s*\n/g, '\n\n');
 }
 
+function ensureLastNewline(str) {
+	return str.replace(/([^\n])$/, '$1\n');
+}
+
 module.exports = function jsToTs(js) {
 	const ts = babel.transform(js, {
 		plugins: generatePlugins()
 	}).code;
 
-	return compactMultipleNewlines(ts);
+	return ensureLastNewline(compactMultipleNewlines(ts));
 };
