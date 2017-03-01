@@ -2,13 +2,13 @@
   "version": "0.0.0",
   "name": "coffee-to-ts",
   "description": "",
-  "author": " <>",
+  "author": "Nikas Praninskas <nikaspran@gmail.com>",
   "bin": "bin/coffee-to-ts.js",
   "main": "lib/index.js",
   "devDependencies": {
-    "babel-cli": "^6.4.5",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-stage-0": "^6.3.13",
+    "babel-cli": "6.4.5",
+    "babel-preset-es2015": "6.3.13",
+    "babel-preset-stage-0": "6.3.13",
     "mocha": "^2.2.5"
   },
   "scripts": {
@@ -19,11 +19,11 @@
     "prepublish": "npm run test && npm run clean && npm run build"
   },
   "dependencies": {
-    "babel-core": "^6.11.4",
-    "babel-generator": "^6.11.4",
-    "babel-template": "^6.9.0",
-    "babel-types": "^6.11.1",
-    "babylon": "^6.8.4",
+    "babel-core": "6.11.4",
+    "babel-generator": "6.11.4",
+    "babel-template": "6.9.0",
+    "babel-types": "6.23.0",
+    "babylon": "6.8.4",
     "commander": "^2.9.0",
     "decaffeinate": "^2.19.5",
     "glob": "^7.0.5",
