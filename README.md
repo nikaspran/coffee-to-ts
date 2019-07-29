@@ -1,6 +1,8 @@
 # coffee-to-ts
 
-> A command line utility to transform CoffeeScript files to TypeScript
+A command line utility to transform CoffeeScript files to TypeScript
+
+**[NOT ACTIVELY MAINTAINED]** This project is not actively maintained. Feel free to use it if it works for you and submit PRs but it's unlikely that I will personally be making any active changes.
 
 ## Prerequisites
 
